@@ -22,9 +22,9 @@ export class UserController {
 
     @Post()
     @ApiOperation({ summary: 'Создать пользователя' })
-    @ApiBody({schema:{example:{name: 'Ахмед', surname: 'Мамедов'}}})
-    createUser(@Body() user: { name: string, surname: string }) {
-        return this.userService.createUser(user.name, user.surname);
+    @ApiBody({schema:{example:{name: 'Ахмед', surname: 'Мамедов', login: 'liberty', password: '1234'}}})
+    createUser(@Body() user: { name: string, surname: string, login: string, password: string}) {
+        return this.userService.createUser(user.name, user.surname, user.login, user.password);
     }
 
     @Patch(':id')
