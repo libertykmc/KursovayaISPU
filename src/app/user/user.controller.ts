@@ -1,6 +1,7 @@
 import {Controller, Get, Post, Body, Param, Patch, Delete} from '@nestjs/common';
 import {UserService} from './user.service';
 import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
+import { User } from './entities/user.entity';
 
 @ApiTags('users')
 @Controller('users')
@@ -22,7 +23,7 @@ export class UserController {
 
     @Post()
     @ApiOperation({ summary: 'Создать пользователя' })
-    @ApiBody({schema:{example:{name: 'Ахмед', surname: 'Мамедов', login: 'liberty', password: '1234'}}})
+    @ApiBody({schema:{example:{name: '', surname: '', login: '', password: ''}}})
     createUser(@Body() user: { name: string, surname: string, login: string, password: string}) {
         return this.userService.createUser(user.name, user.surname, user.login, user.password);
     }
@@ -30,15 +31,15 @@ export class UserController {
     @Patch(':id')
     @ApiOperation({ summary: 'Обновить пользователя' })
     @ApiParam({ name: 'id', required: true, description:'Id пользователя' })
-    @ApiBody({schema:{example:{name: 'Ахмед', surname: 'Мамедов'}}})
-    updateUser(@Param('id') id: string, @Body() user: { name: string, surname: string }) {
-       // return this.userService.update(+id, user);
+    @ApiBody({schema:{example:{name: '', surname: '', login: '', password: ''}}})
+    updateUser(@Param('id') id: string, @Body() user:User) {
+        return this.userService.update(id, user);
     }
 
     @Delete(':id')
     @ApiOperation({ summary: 'Удалить пользователя' })
     @ApiParam({ name: 'id', required: true, description:'Id пользователя' })
     removeUser(@Param('id') id: string) {
-        return this.userService.delete(+id);
+        return this.userService.delete(id);
     }
 }

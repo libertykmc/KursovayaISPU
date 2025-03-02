@@ -19,11 +19,11 @@ export class UserService {
         return this.userRepository.findOneBy({id});
     }
 
-    async delete(id: number){
+    async delete(id: string){
        await this.userRepository.delete(id);
     }
    
-    update(id: number, user: User){
+    update(id: string, user: User){
         return this.userRepository.update(id, user);
     }
 
