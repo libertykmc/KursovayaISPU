@@ -1,7 +1,9 @@
-import {Controller, Get, Post, Body, Param, Patch, Delete} from '@nestjs/common';
+import {Controller, Get, Post, Body, Param, Patch, Delete, UsePipes} from '@nestjs/common';
 import {UserService} from './user.service';
 import { ApiTags, ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
-import { User } from './entities/user.entity';
+import { UserEntity } from './entities/user.entity';
+import { EmailValidationPipe } from 'src/validation/email';
+import { UserCreateDto, UserLoginRequestDto } from 'src/dto/user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -21,18 +23,11 @@ export class UserController {
         return this.userService.findOne(id);
     }
 
-    @Post()
-    @ApiOperation({ summary: 'Создать пользователя' })
-    @ApiBody({schema:{example:{name: '', surname: '', login: '', password: ''}}})
-    createUser(@Body() user: { name: string, surname: string, login: string, password: string}) {
-        return this.userService.createUser(user.name, user.surname, user.login, user.password);
-    }
-
     @Patch(':id')
     @ApiOperation({ summary: 'Обновить пользователя' })
     @ApiParam({ name: 'id', required: true, description:'Id пользователя' })
     @ApiBody({schema:{example:{name: '', surname: '', login: '', password: ''}}})
-    updateUser(@Param('id') id: string, @Body() user:User) {
+    updateUser(@Param('id') id: string, @Body() user:UserEntity) {
         return this.userService.update(id, user);
     }
 
@@ -42,4 +37,18 @@ export class UserController {
     removeUser(@Param('id') id: string) {
         return this.userService.delete(id);
     }
+
+    @Post('register')
+    @UsePipes(EmailValidationPipe)
+    async authRegister(@Body() dto: UserCreateDto) {
+        const user = await this.userService.register(dto);
+        return this.userService.generateToken(user);
+    }
+
+    @Post('login')
+    async authLogin(@Body() dto:UserLoginRequestDto) {
+        const user = await this.userService.login(dto);
+        return this.userService.generateToken(user);
+    }
+    
 }
